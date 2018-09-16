@@ -195,7 +195,7 @@ class TLDetector(object):
             # rospy.loginfo(str(closest_light.pose.pose))
             state = self.get_light_state(light)
             rospy.loginfo('Found traffic light ' + str(state))
-            return closest_light, state
+            return closest_position, state
         self.waypoints = None
         return -1, TrafficLight.UNKNOWN
 
