@@ -101,6 +101,8 @@ def read_data(batch_size):
             for i in range(batch, batch + batch_size):
                 img_path = images[order[i]]
                 img =  misc.imread(img_path)/255.0
+                
+
                 label = re.findall('(\d+_(\d+))', img_path)[0][1]
                 label = int(label)
                 if label == 4:
@@ -109,11 +111,45 @@ def read_data(batch_size):
                 batch_y.append(label)
             yield aug_img(batch_x), batch_y
 
+def read_real_data(batch_size):
+    data_path = r'/home/yhbyhb/Yujin/dataset-sdcnd-capstone/data/real_training_data/*/*.jpg'
+
+    images = glob.glob(data_path)
+
+    n = len(images)
+    print('read data success!')
+    print('data size: ' + str(n))
+    while True:
+        order = np.random.permutation(n)
+
+        for batch in range(0, n, batch_size):
+            if batch + batch_size > n:
+                break
+            batch_x = []
+            batch_y = []
+
+            for i in range(batch, batch + batch_size):
+                img_path = images[order[i]]
+                img =  misc.imread(img_path)/255.0
+                img =  np.resize(img, (600, 800, 3))
+                label = 2
+                if(len(re.findall('unidentified', img_path)) > 0): label = 3
+                if(len(re.findall('green', img_path))> 0): label = 2
+                if(len(re.findall('nolight', img_path)) > 0): label = 3
+                if(len(re.findall('red', img_path)) > 0): label = 0
+                if(len(re.findall('yellow', img_path)) > 0): label = 1
+
+                label = int(label)
+
+                batch_x.append(img)
+                batch_y.append(label)
+            yield aug_img(batch_x), batch_y            
+
 def main():
     n_epoc = 10
     batch_size = 32
     bath_per_epoc = 3000 // batch_size
-    data_reader = read_data(batch_size)
+    data_reader = read_real_data(batch_size)
     learning_rate = 0.002
     
     with tf.Session() as sess:
@@ -135,7 +171,7 @@ def main():
             print(batch_loss)
 
         now = datetime.now()
-        model_path = str.format('.\\saved_model\\{0}{1}{2}_{3}{4}{5}', now.year, now.month, now.day, now.hour, now.minute, now.second)
+        model_path = str.format('/home/yhbyhb/Yujin/CarND-Capstone/tl_trainner/saved_model/{0}{1}{2}_{3}{4}{5}', now.year, now.month, now.day, now.hour, now.minute, now.second)
         tf.saved_model.simple_save(sess, model_path, inputs={'input': input_layer}, outputs={'output': output})
 
 if __name__ == "__main__":
