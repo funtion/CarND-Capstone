@@ -6,7 +6,8 @@
 * Member 1: Shufang xieshufang76@gmail.com
 * Member 2: Yujin Lee yujin.gha@gmail.com
 
-
+### Real Dataset ###
+We used the real traffic light images with labels to train the light classification model in real-world and these are from [here](https://github.com/coldKnight/TrafficLight_Detection-TensorFlowAPI).
 
 ## Original README
 
