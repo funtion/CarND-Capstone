@@ -4,9 +4,11 @@ from tensorflow import saved_model
 import numpy as np
 
 class TLClassifier(object):
-    def __init__(self, sess):
+    def __init__(self, sess, is_site):
         
         model_path = './saved_model/'
+        if is_site:
+            model_path = './saved_real_model/'
         self.sess = sess
         saved_model.loader.load(sess, [saved_model.tag_constants.SERVING], model_path)
         graph = tf.get_default_graph()
